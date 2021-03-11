@@ -1,0 +1,37 @@
+---
+name: tox tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  tox-tests:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: "ubuntu-20.04"
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10.0-alpha - 3.10", "pypy3"]
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: "Update pip"
+        run: |
+          set -ex
+          python -V
+          python -m pip install --upgrade pip setuptools wheel
+      - name: "Install tox dependencies"
+        run: |
+          set -ex
+          python -m pip install --upgrade tox tox-gh-actions
+          tox --version
+      - name: "Run tox for ${{ matrix.python-version }}"
+        run: |
+          set -ex
+          python -m tox

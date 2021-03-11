@@ -1,0 +1,11 @@
+include src/certifi/cacert.pem
+
+include LICENSE
+include README.md
+
+include pyproject.toml
+include tox.ini
+
+include tests.py
+
+# recursive-exclude .github *
