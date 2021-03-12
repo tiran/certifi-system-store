@@ -19,6 +19,10 @@ elif [ -e /usr/bin/apt ]; then
 elif [ -e /sbin/apk ]; then
     apk add python3 py3-pip
     apk add python3-dev gcc musl-dev
+elif [ -e /usr/bin/zypper ]; then
+    zypper update -y
+    zypper install -y python3-pip
+    zypper clean
 else
     echo "Distro not supported"
     exit 1

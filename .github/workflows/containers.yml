@@ -25,6 +25,7 @@ jobs:
           "centos:7", "centos:8",
           "debian:buster", "debian:testing",
           "fedora:32", "fedora:33", "fedora:34",
+          "opensuse/leap",
           "ubuntu:bionic", "ubuntu:focal", "ubuntu:groovy"
         ]
     steps:
@@ -33,6 +34,7 @@ jobs:
       - name: Define tag
         run: |
            suffix="${distro//:/_}"
+           suffix="${suffix////_}"
            echo "tag=certsysstore:$suffix" >> $GITHUB_ENV
         env:
            distro: ${{ matrix.distro }}
