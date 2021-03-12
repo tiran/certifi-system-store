@@ -1,0 +1,57 @@
+---
+name: distro containers
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  repository_dispatch:
+    types: rebuild
+  workflow_dispatch:
+    inputs:
+      git-ref:
+        required: false
+
+jobs:
+  distros:
+    name: "Container ${{ matrix.distro }}"
+    runs-on: "ubuntu-20.04"
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [
+          "alpine",
+          "centos:7", "centos:8",
+          "debian:buster", "debian:testing",
+          "fedora:32", "fedora:33", "fedora:34",
+          "ubuntu:bionic", "ubuntu:focal", "ubuntu:groovy"
+        ]
+    steps:
+      - name: checkout
+        uses: "actions/checkout@v2"
+      - name: Define tag
+        run: |
+           suffix="${distro//:/_}"
+           echo "tag=certsysstore:$suffix" >> $GITHUB_ENV
+        env:
+           distro: ${{ matrix.distro }}
+      - name: Create Dockerfile
+        run: |
+          cat > Dockerfile << EOF
+          FROM ${{ matrix.distro }}
+          COPY .github/provision.sh /
+          RUN /provision.sh
+          RUN python3 -m pip install --upgrade pip setuptools tox
+          VOLUME /workdir
+          COPY .github/entry.sh /
+          ENTRYPOINT /entry.sh
+          EOF
+      - name: "Build container ${{ matrix.distro }}"
+        run: |
+           set -xe
+           docker build . -f Dockerfile -t ${{ env.tag }}
+      - name: "Run container ${{ matrix.distro }}"
+        run: |
+          set -xe
+          docker run --volume $(pwd):/workdir ${{ env.tag }}
