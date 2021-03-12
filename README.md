@@ -22,7 +22,7 @@ $ python -m certifi
 
 * Alpine
 * Arch
-* Fedora 34+
+* Fedora 34+ (see [rhbz#1895619](https://bugzilla.redhat.com/show_bug.cgi?id=1895619))
 * FreeBSD (with ``ca_root_nss`` package)
 * OpenWRT
 * RHEL 9
@@ -46,7 +46,8 @@ $ python -m certifi
 ## How does it work?
 
 * empty ``certifi/cacert.pem`` to override any existing certifi data.
-* fake ``certifi dist-info`` with much higher version number than certifi
+* fake ``certifi dist-info`` with much higher version number than certifi's
+  default dist-info metadata
 
 ```
 $ venv/bin/pip install certifi-system-store
