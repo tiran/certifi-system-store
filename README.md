@@ -16,6 +16,42 @@ $ python -m pip install certifi-system-store
 $ python -m certifi
 ```
 
+## Platform support
+
+### Supported platforms
+
+Most major Linux distributions and FreeBSD are supported.
+
+* Alpine
+* Debian-based distributions (Ubuntu, Raspberry Pi OS, Tails, ...)
+  * **NOTE:** Some distributions don't have a system trust store in
+    their minimal package list. You may have to install
+    ``ca-certificates`` manually, see
+    [Debian bug #960869](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=960869),
+    [Ubuntu bug #1879310](https://bugs.launchpad.net/ubuntu/+source/python3.6/+bug/1879310).
+* Fedora-based distributions (RHEL, CentOS, CentOS Streams)
+* FreeBSD
+  * **NOTE:** may require manual installation of ``ca_root_nss``
+* OpenSUSE
+* OpenWRT
+
+### Untested platforms
+
+* ArchLinux
+* Gentoo
+* Slackware
+* VoidLinux
+* other Linux distributions not based on Debian or Fedora
+* OpenBSD
+* NetBSD
+
+### Unsupported platforms
+
+* Windows
+* macOS
+* Android (has a cert directory but not a PEM bundle)
+* iOS
+
 ## Supported system trust stores
 
 ### ``/etc/ssl/cert.pem``
@@ -23,7 +59,7 @@ $ python -m certifi
 * Alpine
 * Arch
 * Fedora 34+ (see [rhbz#1895619](https://bugzilla.redhat.com/show_bug.cgi?id=1895619))
-* FreeBSD (with ``ca_root_nss`` package)
+* FreeBSD (requires ``ca_root_nss`` package)
 * OpenWRT
 * RHEL 9
 
@@ -35,9 +71,9 @@ $ python -m certifi
 
 ### ``/etc/ssl/certs/ca-certificates.crt``
 
-* Debian (with ``ca-certificates``)
+* Debian (requires ``ca-certificates`` package)
 * Gentoo
-* Ubuntu (with ``ca-certificates``)
+* Ubuntu (requires ``ca-certificates`` package)
 
 ### ``/etc/ssl/ca-bundle.pem``
 
