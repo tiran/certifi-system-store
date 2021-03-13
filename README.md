@@ -149,6 +149,51 @@ Most major Linux distributions and FreeBSD are supported.
 
 * SUSE
 
+
+## How to install custom CA certificates
+
+### Alpine
+
+```shell
+$ sudo cp my-custom-ca.pem /usr/local/share/ca-certificates/my-custom-ca.crt
+$ sudo update-ca-certificates
+```
+
+### Arch
+
+```shell
+$ sudo cp my-custom-ca.pem /etc/ca-certificates/trust-source/anchors/my-custom-ca.crt
+$ sudo update-ca-trust
+```
+
+### CentOS, Fedora, RHEL
+
+Standard PEM or DER-encoded certificates (``BEGIN CERTIFICATE``)
+
+```shell
+$ sudo cp my-custom-ca.pem /etc/pki/ca-trust/source/anchors/
+$ sudo update-ca-trust
+```
+
+Certificates with additional trust information
+(``BEGIN TRUSTED CERTIFICATE``)
+
+```shell
+$ sudo cp my-custom-ca.pem /etc/pki/ca-trust/source/
+$ sudo update-ca-trust
+```
+
+### Debian, Ubuntu
+
+Note: The man page ``update-ca-certificates(8)`` mentions that cert
+files must have a ``.crt`` extension.
+
+```shell
+$ sudo cp my-custom-ca.pem /usr/local/share/ca-certificates/my-custom-ca.crt
+$ sudo update-ca-certificates
+```
+
+
 ## How does it work?
 
 * empty ``certifi/cacert.pem`` to override any existing certifi data.
@@ -171,3 +216,9 @@ certifi-3000.1.dist-info -> certifi_system_store-3000.1.dist-info
 certifi_system_store-3000.1.dist-info
 ...
 ```
+
+## Special thanks
+
+* Cory Benfield
+* Pradyun Gedam
+* Wouter Bolsterlee
