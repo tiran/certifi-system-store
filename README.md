@@ -11,9 +11,49 @@ package. The command ensures that you have a working system trust store
 and patches your current Python environment. It creates or replaces
 certifi's dist-info directory with certifi-system-store's dist-info.
 
+I recommend that you install ``certifi-system-store`` and patch first,
+then install your packages and requirements.
+
 ```
 $ python -m pip install certifi-system-store
 $ python -m certifi
+$ python -m pip install requests
+```
+
+### Verification
+
+The ``certifi`` command of ``certifi-system-store`` has an additional
+argument ``--system-store``. The argument is not available with standard
+``certifi`` package. You can use the property to verify that ``certifi``
+package is provided by ``certifi-system-store``.
+
+```
+$ python -m venv venv
+$ venv/bin/pip install certifi
+$ venv/bin/python -m certifi --system-store
+usage: __main__.py [-h] [-c]
+__main__.py: error: unrecognized arguments: --system-store
+$ echo $?
+2
+```
+
+```
+$ venv/bin/pip install certifi-system-store
+$ venv/bin/python -m certifi --system-store
+/etc/pki/tls/cert.pem
+$ echo $?
+0
+```
+
+The command also checks for the presence of a CA cert bundle:
+
+```
+$ venv/bin/python -m certifi
+Traceback (most recent call last):
+  ...
+FileNotFoundError: /etc/ssl/cert.pem, /etc/pki/tls/cert.pem, /etc/ssl/certs/ca-certificates.crt, /etc/ssl/ca-bundle.pem
+$ echo $?
+1
 ```
 
 ## Platform support
@@ -36,6 +76,8 @@ Most major Linux distributions and FreeBSD are supported.
 * OpenWRT
 
 ### Untested platforms
+
+``certifi-system-store`` may work, but there is no CI for these platforms.
 
 * ArchLinux
 * Gentoo
@@ -91,7 +133,8 @@ $ ls -l .tox/venv/lib/python3.9/site-packages/
 certifi
 certifi_system_store-3000.1.dist-info
 ...
-$ venv/bin/python -m certifi -v
+$ venv/bin/python -m certifi -v --system-store
+certifi-system store 3000.0a1
 Patched certifi.dist-info -> certifi_system_store.dist-info
 /etc/pki/tls/cert.pem
 $ ls -l .tox/venv/lib/python3.9/site-packages/

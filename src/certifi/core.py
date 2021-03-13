@@ -30,7 +30,7 @@ def where():
             _SSL_PEM = candidate
             return _SSL_PEM
     else:
-        raise FileNotFoundError("cert.pem")
+        raise FileNotFoundError(", ".join(_CANDIDATES))
 
 
 def contents():
