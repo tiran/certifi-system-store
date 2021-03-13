@@ -14,7 +14,7 @@ certifi's dist-info directory with certifi-system-store's dist-info.
 I recommend that you install ``certifi-system-store`` and patch first,
 then install your packages and requirements.
 
-```
+```shell
 $ python -m pip install certifi-system-store
 $ python -m certifi
 $ python -m pip install requests
@@ -27,7 +27,7 @@ argument ``--system-store``. The argument is not available with standard
 ``certifi`` package. You can use the property to verify that ``certifi``
 package is provided by ``certifi-system-store``.
 
-```
+```shell
 $ python -m venv venv
 $ venv/bin/pip install certifi
 $ venv/bin/python -m certifi --system-store
@@ -37,7 +37,7 @@ $ echo $?
 2
 ```
 
-```
+```shell
 $ venv/bin/pip install certifi-system-store
 $ venv/bin/python -m certifi --system-store
 /etc/pki/tls/cert.pem
@@ -47,13 +47,38 @@ $ echo $?
 
 The command also checks for the presence of a CA cert bundle:
 
-```
+```shell
 $ venv/bin/python -m certifi
 Traceback (most recent call last):
   ...
 FileNotFoundError: /etc/ssl/cert.pem, /etc/pki/tls/cert.pem, /etc/ssl/certs/ca-certificates.crt, /etc/ssl/ca-bundle.pem
 $ echo $?
 1
+```
+
+To check for ``certifi-system-store`` at runtime:
+
+```python
+import certifi
+
+if not getattr(certifi, "__certifi_system_store__", False):
+    raise ImportError("certifi-system-store is not installed")
+```
+
+To depend on ``certifi-system-store``:
+
+```python
+# setup.py
+from setuptools import setup
+
+setup(
+    ...,
+    install_requires=[
+        "certifi-system-store ; sys_platform == 'linux' or 'freebsd' in sys_platform",
+        "certifi > 3000 ; sys_platform == 'linux' or 'freebsd' in sys_platform",
+        "certifi",
+    ],
+)
 ```
 
 ## Platform support
@@ -127,7 +152,7 @@ Most major Linux distributions and FreeBSD are supported.
 * fake ``certifi dist-info`` with much higher version number than certifi's
   default dist-info metadata
 
-```
+```shell
 $ venv/bin/pip install certifi-system-store
 $ ls -l .tox/venv/lib/python3.9/site-packages/
 certifi

@@ -14,7 +14,7 @@ def test_contents():
 
 
 def test_is_css():
-    assert certifi.__certifi_system_trust__
+    assert certifi.__certifi_system_store__
 
 
 def test_version():
