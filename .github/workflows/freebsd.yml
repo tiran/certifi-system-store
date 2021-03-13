@@ -1,0 +1,35 @@
+---
+name: FreeBSD vm
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  repository_dispatch:
+    types: rebuild
+  workflow_dispatch:
+    inputs:
+      git-ref:
+        required: false
+
+jobs:
+  freebsd:
+    runs-on: macos-latest
+    name: FreeBSD with ca_root_nss
+    strategy:
+      fail-fast: false
+    steps:
+      - name: checkout
+        uses: "actions/checkout@v2"
+      - name: Run test in FreeBSD VM
+        uses: vmactions/freebsd-vm@v0.1.2
+        with:
+          usesh: true
+          prepare: pkg install -y python37 ca_root_nss
+          run: |
+            set -ex
+            python3.7 -V
+            python3.7 -m ensurepip
+            python3.7 -m pip install --upgrade pip setuptools tox
+            python3.7 -m tox --skip-missing-interpreters py37-test py37-requests
