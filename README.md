@@ -1,8 +1,11 @@
-# certifi-system-store, a certifi hack
+# certifi-system-store, a certifi hack to use system trust store
 
 *certifi-system-store* is a replacement and hack for consumers of
 *certifi*. It replaces certifi with an alternative implementation that
 uses the system trust store on Linux and some BSD distributions.
+
+Please be advised that this package is brand new and **highly
+experimental**. It hasn't been tested in any production environment.
 
 ## Installation
 
