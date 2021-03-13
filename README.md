@@ -98,7 +98,6 @@ Most major Linux distributions and FreeBSD are supported.
 * FreeBSD
   * **NOTE:** may require manual installation of ``ca_root_nss``
 * OpenSUSE
-* OpenWRT
 
 ### Untested platforms
 
@@ -106,6 +105,7 @@ Most major Linux distributions and FreeBSD are supported.
 
 * ArchLinux
 * Gentoo
+* OpenWRT
 * Slackware
 * VoidLinux
 * other Linux distributions not based on Debian or Fedora
