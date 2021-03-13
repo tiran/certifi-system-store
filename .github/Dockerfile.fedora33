@@ -2,9 +2,9 @@ FROM fedora:33
 
 COPY .github/provision.sh /
 RUN /provision.sh
-RUN python3 -m pip install --upgrade pip setuptools tox
 
 VOLUME /workdir
+WORKDIR /workdir
 
 COPY .github/entry.sh /
 ENTRYPOINT /entry.sh
