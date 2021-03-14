@@ -32,4 +32,5 @@ jobs:
             python3.7 -V
             python3.7 -m ensurepip
             python3.7 -m pip install --upgrade pip setuptools tox
+            uname -a
             python3.7 -m tox --skip-missing-interpreters -e py37-test,py37-requests
