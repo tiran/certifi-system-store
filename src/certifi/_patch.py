@@ -28,7 +28,7 @@ def _patch_dist_info():
     except pkg_resources.DistributionNotFound:
         pass
     else:
-        if os.path.samefile(css_dist.egg_info, certifi_dist.egg_info):
+        if certifi_dist.version == css_dist.version:
             return False, css_dist.egg_info, certifi_dist.egg_info
         else:
             # blow away certifi's dist-info
@@ -55,7 +55,9 @@ def _patch_dist_info():
     certifi_dir = os.path.dirname(os.path.abspath(__file__))
     dist_dir = os.path.abspath(certifi_dist.egg_info)
 
-    if os.path.dirname(certifi_dir) != os.path.dirname(dist_dir):
+    # compare with samefile instead of string comparison to avoid false
+    # negatives caused by venv lib64 / lib symlinks
+    if not os.path.samefile(os.path.dirname(certifi_dir), os.path.dirname(dist_dir)):
         raise RuntimeError(
             f"'{certifi_dir} and {dist_dir} have different parent directories."
         )
