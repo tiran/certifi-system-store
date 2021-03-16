@@ -14,4 +14,4 @@ fi
 
 # update to latest setuptools, pipm and tox
 python3 -m pip install --upgrade pip setuptools tox
-python3 -m tox --skip-missing-interpreters
+python3 -m tox -e py3-test,py3-requests
