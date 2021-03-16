@@ -23,7 +23,7 @@ jobs:
       - name: checkout
         uses: "actions/checkout@v2"
       - name: Run test in FreeBSD VM
-        uses: vmactions/freebsd-vm@v0.1.2
+        uses: "vmactions/freebsd-vm@v0.1.2"
         with:
           usesh: true
           prepare: pkg install -y python37 ca_root_nss
@@ -33,4 +33,6 @@ jobs:
             python3.7 -m ensurepip
             python3.7 -m pip install --upgrade pip setuptools tox
             uname -a
-            python3.7 -m tox --skip-missing-interpreters -e py37-test,py37-requests
+            python3.7 -m tox -e py3-test,py3-requests
+            # avoid output spam by "get back by rsync" feature
+            rm -rf .tox
