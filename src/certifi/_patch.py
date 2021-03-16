@@ -45,7 +45,9 @@ def _patch_dist_info():
     abs_certifi_distinfodir = os.path.join(css_basedir, certifi_distinfodir)
 
     # create symlink certifi.dist-info -> certifi_system_store.dist-info
-    _relsymlink(target=abs_css_distinfodir, linkname=abs_certifi_distinfodir)
+    # copy tree
+    shutil.copytree(abs_css_distinfodir, abs_certifi_distinfodir)
+    # _relsymlink(target=abs_css_distinfodir, linkname=abs_certifi_distinfodir)
 
     # get dist info from refreshed working set
     css_dist = pkg_resources.get_distribution("certifi_system_store")
