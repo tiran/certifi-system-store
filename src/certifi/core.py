@@ -3,7 +3,8 @@ import os
 from certifi._patch import _verify_dist_info
 
 _CANDIDATES = [
-    # Alpine, Arch, Fedora 34+, OpenWRT, RHEL 9+, ...
+    # Alpine, Arch, Fedora 34+, OpenWRT, RHEL 9+, FreeBSD, ...
+    # It's a symlink on some platforms (Fedora, FreeBSD)
     "/etc/ssl/cert.pem",
     # Fedora <= 34, RHEL <= 9, CentOS <= 9
     "/etc/pki/tls/cert.pem",
