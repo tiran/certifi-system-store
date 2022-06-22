@@ -22,15 +22,15 @@ jobs:
       matrix:
         distro: [
           "alpine",
-          "centos:7", "centos:8",
-          "debian:buster", "debian:testing",
-          "fedora:32", "fedora:33", "fedora:34",
+          "centos:7", "quay.io/centos/centos:stream8", "quay.io/centos/centos:stream9",
+          "debian:buster", "debian:bullseye",
+          "fedora:35", "fedora:36",
           "opensuse/leap",
-          "ubuntu:bionic", "ubuntu:focal", "ubuntu:groovy"
+          "ubuntu:bionic", "ubuntu:focal", "ubuntu:jammy",
         ]
     steps:
       - name: checkout
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
       - name: Define tag
         run: |
            suffix="${distro//:/_}"
