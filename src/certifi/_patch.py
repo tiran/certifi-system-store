@@ -1,7 +1,31 @@
 import os
 import shutil
 import sys
-import pkg_resources
+
+if sys.version_info >= (3, 8):
+    from importlib import metadata
+
+    PackageNotFoundError = metadata.PackageNotFoundError
+
+    def _get_distinfo(name):
+        dist = metadata.distribution(name)
+        egg_info = dist._path
+        return dist.version, egg_info
+
+    def _invalidate_caches():
+        pass
+
+else:
+    import pkg_resources
+
+    PackageNotFoundError = pkg_resources.DistributionNotFound
+
+    def _get_distinfo(name):
+        dist = pkg_resources.get_distribution(name)
+        return dist.version, dist.egg_info
+
+    def _invalidate_caches():
+        pkg_resources.working_set.__init__()
 
 
 def _relsymlink(target, linkname):
@@ -22,22 +46,22 @@ def _relsymlink(target, linkname):
 
 def _patch_dist_info():
     # distribution object for the canonical project name
-    css_dist = pkg_resources.get_distribution("certifi_system_store")
+    css_version, css_egg_info = _get_distinfo("certifi_system_store")
     try:
-        certifi_dist = pkg_resources.get_distribution("certifi")
-    except pkg_resources.DistributionNotFound:
+        certifi_version, certifi_egg_info = _get_distinfo("certifi")
+    except PackageNotFoundError:
         pass
     else:
-        if certifi_dist.version == css_dist.version:
-            return False, css_dist.egg_info, certifi_dist.egg_info
+        if certifi_version == css_version:
+            return False, css_egg_info, certifi_egg_info
         else:
             # blow away certifi's dist-info
-            shutil.rmtree(certifi_dist.egg_info)
+            shutil.rmtree(certifi_egg_info)
             # reset current working set, so pkg_resources can pick up our hack
-            pkg_resources.working_set.__init__()
+            _invalidate_caches()
 
     # certifi-system-store's dist-info
-    abs_css_distinfodir = os.path.abspath(css_dist.egg_info)
+    abs_css_distinfodir = os.path.abspath(css_egg_info)
     css_basedir, css_distinfodir = os.path.split(abs_css_distinfodir)
 
     # certifi's dist-info in same base directory
@@ -48,12 +72,12 @@ def _patch_dist_info():
     _relsymlink(target=abs_css_distinfodir, linkname=abs_certifi_distinfodir)
 
     # get dist info from refreshed working set
-    css_dist = pkg_resources.get_distribution("certifi_system_store")
-    certifi_dist = pkg_resources.get_distribution("certifi")
+    css_version, css_egg_info = _get_distinfo("certifi_system_store")
+    certifi_version, certifi_egg_info = _get_distinfo("certifi")
 
     # check that certifi dist-info is in same site-packages as certifi package
     certifi_dir = os.path.dirname(os.path.abspath(__file__))
-    dist_dir = os.path.abspath(certifi_dist.egg_info)
+    dist_dir = os.path.abspath(certifi_egg_info)
 
     # compare with samefile instead of string comparison to avoid false
     # negatives caused by venv lib64 / lib symlinks
@@ -65,17 +89,17 @@ def _patch_dist_info():
     # double check versions
     _verify_dist_info()
 
-    return True, css_dist.egg_info, certifi_dist.egg_info
+    return True, css_egg_info, certifi_egg_info
 
 
 def _verify_dist_info():
-    css_dist = pkg_resources.get_distribution("certifi_system_store")
+    css_version, css_egg_info = _get_distinfo("certifi_system_store")
     try:
-        certifi_dist = pkg_resources.get_distribution("certifi")
-    except pkg_resources.DistributionNotFound as e:
+        certifi_version, certifi_egg_info = _get_distinfo("certifi")
+    except PackageNotFoundError as e:
         raise RuntimeError(e)
     else:
-        if certifi_dist.version != css_dist.version:
+        if certifi_version != css_version:
             raise RuntimeError(
                 f"'certifi.dist-info' is not an alias to "
                 f"'certifi_system_store.dist-info'. "
